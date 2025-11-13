@@ -1,3 +1,5 @@
+name: "photo-and-film-4-you"
+
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -19,11 +21,12 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092, CONNECTIONS_FROM_HOST://localhost:19092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092,CONNECTIONS_FROM_HOST://localhost:19092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONNECTIONS_FROM_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+  # -- Database --
   productdb:
     image: postgres
     platform: linux/amd64
@@ -53,7 +56,31 @@ services:
     environment:
       POSTGRES_USER: digital
       POSTGRES_PASSWORD: digital
+      POSTGRES_DB: digital
 
+  # -- Backend --
+  product-solution:
+    image: registry.gitlab.com/uoc/pdp-pds/pdp_pds_2025_2026/pds_2025_2026_a8/photo-and-film-4-you/product-solution:latest
+    depends_on:
+      - productdb
+      - kafka
+    ports:
+      - "18081:18081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://productdb:5432/product
+      SPRING_DATASOURCE_USERNAME: product
+      SPRING_DATASOURCE_PASSWORD: product
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+  # -- Frontend --
+  frontend:
+    image: registry.gitlab.com/uoc/pdp-pds/pdp_pds_2025_2026/pds_2025_2026_a8/photo-and-film-4-you/frontend-solution:latest
+    depends_on:
+      - product-solution
+    ports:
+      - "80:80"
+
+  # -- Tools --
   adminer:
     image: adminer
     platform: linux/amd64

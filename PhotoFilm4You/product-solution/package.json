@@ -1,0 +1,15 @@
+{
+  "name": "product-solution",
+  "version": "1.0.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/UOC/pdp-pds/pdp_pds_2025_2026/pds_2025_2026_a8/photo-and-film-4-you/product-solution.git"
+  },
+  "devDependencies": {
+    "semantic-release": "^24.0.0",
+    "@semantic-release/gitlab": "^13.0.0",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/release-notes-generator": "^14.0.0"
+  }
+}
