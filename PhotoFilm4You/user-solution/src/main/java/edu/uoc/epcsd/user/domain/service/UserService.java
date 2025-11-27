@@ -18,4 +18,6 @@ public interface UserService {
     Set<User> getUsersToAlert(Long productId, LocalDate availableOnDate);
 
     Long createUser(User user);
+
+    Optional<User> authenticate(String email, String password);
 }
