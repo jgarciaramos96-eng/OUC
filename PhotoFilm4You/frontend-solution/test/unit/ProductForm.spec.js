@@ -3,8 +3,10 @@ import ProductForm from '@/components/ProductForm.vue';
 import flushPromises from 'flush-promises';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
-const getCategoriesMock = vi.fn();
-const createProductMock = vi.fn();
+const { getCategoriesMock, createProductMock } = vi.hoisted(() => ({
+  getCategoriesMock: vi.fn(),
+  createProductMock: vi.fn(),
+}));
 
 vi.mock('@/services/product/api', () => ({
   default: {
@@ -30,7 +32,7 @@ describe('ProductForm', () => {
     vi.useRealTimers();
   });
 
-  it('loads categories on mount and selects nested subcategory', async () => {
+  it('loads of categories and selection of subcategory', async () => {
     vi.useFakeTimers();
     getCategoriesMock.mockResolvedValue({ data: categories });
 
@@ -53,7 +55,7 @@ describe('ProductForm', () => {
     expect(wrapper.vm.product.categoryId).toBe(2);
   });
 
-  it('submits the form, calls the API and resets the form on success', async () => {
+  it('submits the form and calls the API', async () => {
     vi.useFakeTimers();
     getCategoriesMock.mockResolvedValue({ data: categories });
     createProductMock.mockResolvedValue({ data: 10 });

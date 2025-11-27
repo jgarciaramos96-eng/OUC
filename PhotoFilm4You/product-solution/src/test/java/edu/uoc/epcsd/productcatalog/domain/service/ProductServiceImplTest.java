@@ -30,32 +30,32 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void createProductDelegatesToRepositoryAndReturnsIdentifier() {
+    void createProductOK() {
         Product product = Product.builder()
-                .id(null)
-                .name("Camera")
-                .description("Mirrorless camera")
-                .dailyPrice(25.5)
-                .brand("PhotoCorp")
-                .model("X100")
+                .id(1L)
+                .name("CamaraSUB")
+                .description("Camara especial subacuática")
+                .dailyPrice(45.5)
+                .brand("Canon")
+                .model("XSUB-100")
                 .categoryId(4L)
                 .build();
 
-        when(productRepository.createProduct(product)).thenReturn(99L);
+        when(productRepository.createProduct(product)).thenReturn(1234L);
 
-        Long identifier = productService.createProduct(product);
+        Long id = productService.createProduct(product);
 
-        assertEquals(99L, identifier);
+        assertEquals(1234L, id);
         verify(productRepository).createProduct(product);
     }
 
     @Test
-    void createProductPropagatesRepositoryIllegalArgumentException() {
+    void createProductInvalidCategory() {
         Product product = Product.builder()
-                .id(null)
-                .name("Tripod")
-                .description("Carbon fiber tripod")
-                .dailyPrice(10.0)
+                .id(1L)
+                .name("TripodeFC")
+                .description("Tripode de fribra de carbono")
+                .dailyPrice(16.0)
                 .brand("StableShot")
                 .model("Pro-Lite")
                 .categoryId(99L)
