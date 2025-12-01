@@ -1,7 +1,9 @@
 package edu.uoc.epcsd.user.application.rest;
 
 import edu.uoc.epcsd.user.application.rest.request.CreateUserRequest;
+import edu.uoc.epcsd.user.application.rest.request.LoginRequest;
 import edu.uoc.epcsd.user.application.rest.response.GetUserResponse;
+import edu.uoc.epcsd.user.application.rest.response.LoginResponse;
 import edu.uoc.epcsd.user.domain.User;
 import edu.uoc.epcsd.user.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +62,16 @@ public class UserRESTController {
 
         return ResponseEntity.ok().body(userService.getUsersToAlert(productId, availableOnDate).stream().map(user -> GetUserResponse.fromDomain(user)).toArray(GetUserResponse[]::new));
     }
+    
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
+        log.trace("login");
+
+        return userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword())
+                .map(user -> ResponseEntity.ok(LoginResponse.fromDomain(user)))
+                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    }
+
 
     @PostMapping
     public ResponseEntity<Long> createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {

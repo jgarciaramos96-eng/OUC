@@ -41,4 +41,10 @@ public class UserServiceImpl implements UserService {
         return alertRepository.findAlertsByProductAndDate(productId, availableOnDate).stream().collect(Collectors.toList())
                 .stream().map(alert -> userRepository.findUserById(alert.getUserId()).get()).collect(Collectors.toSet());
     }
+
+	@Override
+	public Optional<User> authenticate(String email, String password) {
+		return userRepository.findUserByEmail(email)
+                .filter(user -> user.getPassword().equals(password));
+	}
 }

@@ -10,11 +10,13 @@
     </parent>
     <groupId>edu.uoc.epcsd</groupId>
     <artifactId>user</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>user</name>
     <description>User Spring Boot stub for EPCSD</description>
     <properties>
         <java.version>11</java.version>
+        <sonar.projectKey>SW8-User</sonar.projectKey>
+        <sonar.projectName>SW8-User</sonar.projectName>
+        <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
     </properties>
     <dependencies>
         <dependency>
@@ -67,6 +69,26 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                    <id>prepare-agent</id>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                    </execution>
+                    <execution>
+                    <id>report</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
