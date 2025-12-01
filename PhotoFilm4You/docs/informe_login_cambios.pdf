@@ -1,0 +1,271 @@
+%PDF-1.4
+%
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 3 /Kids [ 3 0 R 4 0 R 5 0 R ] >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 6 0 R /Resources << /Font << /F1 9 0 R >> >> >>
+endobj
+6 0 obj
+<< /Length 3037 >>
+stream
+BT
+/F1 12 Tf
+14 TL
+50 780 Td
+(INFORME DETALLADO DE LOS LTIMOS CAMBIOS DE LOGIN) Tj
+T*
+() Tj
+T*
+(OBJETIVO GENERAL) Tj
+T*
+(Implementar un flujo de login **muy bsico** que permita al frontend validar usuarios ya) Tj
+T*
+(existentes en el backend sin introducir capas adicionales de seguridad, sesiones ni tokens. El) Tj
+T*
+(foco fue ofrecer un punto de integracin mnimo para las pruebas manuales del formulario.) Tj
+T*
+() Tj
+T*
+(CAMBIOS EN EL BACKEND \(MODULO `USER-SOLUTION`\)) Tj
+T*
+(1. **DTO de entrada \(`LoginRequest`\)**) Tj
+T*
+(   - Ubicacin: `user-) Tj
+T*
+(solution/src/main/java/edu/uoc/epcsd/user/application/rest/request/LoginRequest.java`) Tj
+T*
+(   - Campos: `email` y `password`, ambos marcados con `@NotBlank` para rechazar peticiones) Tj
+T*
+(vacas a nivel de validacin.) Tj
+T*
+(   - Motivo: disponer de un contrato explcito y sencillo que refleje los datos mnimos que) Tj
+T*
+(enva el frontend.) Tj
+T*
+() Tj
+T*
+(2. **DTO de salida \(`LoginResponse`\)**) Tj
+T*
+(   - Ubicacin: `user-) Tj
+T*
+(solution/src/main/java/edu/uoc/epcsd/user/application/rest/response/LoginResponse.java`) Tj
+T*
+(   - Campos devueltos: `id`, `fullName`, `email`, `phoneNumber`.) Tj
+T*
+(   - Motivo: regresar un perfil ligero del usuario autenticado sin exponer la contrasea ni) Tj
+T*
+(datos innecesarios.) Tj
+T*
+() Tj
+T*
+(3. **Servicio de autenticacin \(`UserService` / `UserServiceImpl`\)**) Tj
+T*
+(   - Se aadi el mtodo `Optional<User> authenticate\(String email, String password\)` en la) Tj
+T*
+(interfaz y su implementacin.) Tj
+T*
+(   - Lgica: buscar por email y filtrar si la contrasea coincide exactamente con la almacenada) Tj
+T*
+(en memoria.) Tj
+T*
+(   - Motivo: reutilizar el repositorio existente para comprobar credenciales sin aadir cifrado) Tj
+T*
+(ni persistencia adicional, acorde al requerimiento de sencillez.) Tj
+T*
+() Tj
+T*
+(4. **Endpoint REST `/users/login`**) Tj
+T*
+(   - Ubicacin: `user-) Tj
+T*
+(solution/src/main/java/edu/uoc/epcsd/user/application/rest/UserRESTController.java`.) Tj
+T*
+(   - Comportamiento: recibe `LoginRequest`, delega en `authenticate` y devuelve `200 OK` con) Tj
+T*
+(`LoginResponse` o `401 Unauthorized` si no coincide.) Tj
+T*
+(   - Motivo: exponer un punto de entrada claro para el formulario del frontend, manteniendo la) Tj
+T*
+(semntica HTTP estndar de xito o credenciales invlidas.) Tj
+T*
+() Tj
+T*
+(CAMBIOS EN EL FRONTEND \(MODULO `FRONTEND-SOLUTION`\)) Tj
+T*
+(1. **Cliente de usuario \(`src/services/user/api.js`\)**) Tj
+T*
+(   - Configura un cliente Axios apuntando a `process.env.VUE_USER_API_URL` \(por defecto) Tj
+T*
+(`http://localhost:18080`\).) Tj
+T*
+(   - Expone `login\(credentials\)` que enva un POST a `/users/login` con email y contrasea.) Tj
+T*
+(   - Motivo: centralizar la llamada y permitir reconfigurar la URL del backend sin tocar) Tj
+T*
+(componentes.) Tj
+T*
+() Tj
+T*
+(2. **Componente de login \(`src/components/UserLogin.vue`\)**) Tj
+T*
+(   - Formulario con campos controlados `email` y `password`, estilos de Bootstrap y mensajes) Tj
+T*
+(dinmicos.) Tj
+T*
+ET
+endstream
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 7 0 R /Resources << /Font << /F1 9 0 R >> >> >>
+endobj
+7 0 obj
+<< /Length 3091 >>
+stream
+BT
+/F1 12 Tf
+14 TL
+50 780 Td
+(   - Lgica: invoca `api.login`, muestra mensaje de bienvenida con el `fullName` retornado o un) Tj
+T*
+(mensaje de error si recibe `401`.) Tj
+T*
+(   - Motivo: ofrecer una interfaz mnima para probar el endpoint y visualizar rpidamente si) Tj
+T*
+(las credenciales son vlidas.) Tj
+T*
+() Tj
+T*
+(3. **Integracin en la aplicacin \(`src/App.vue`\)**) Tj
+T*
+(   - Se importa y renderiza `<UserLogin />` junto al formulario de productos existente.) Tj
+T*
+(   - Motivo: disponer del login en la pantalla principal para facilitar la validacin manual) Tj
+T*
+(sin navegacin adicional.) Tj
+T*
+() Tj
+T*
+(FLUJO COMPLETO DE AUTENTICACIN) Tj
+T*
+(1. El usuario rellena email y contrasea en `UserLogin.vue`.) Tj
+T*
+(2. El componente llama a `api.login`, que enva la peticin al backend de usuarios.) Tj
+T*
+(3. `UserRESTController` recibe la peticin, valida campos y delega en) Tj
+T*
+(`UserService.authenticate`.) Tj
+T*
+(4. `UserServiceImpl` busca el usuario por email y comprueba si la contrasea coincide) Tj
+T*
+(exactamente.) Tj
+T*
+(5. Si coincide, se responde con `LoginResponse` \(id, nombre, email, telfono\); si no, se) Tj
+T*
+(responde `401` sin cuerpo.) Tj
+T*
+(6. El frontend muestra un mensaje verde de bienvenida o rojo de credenciales incorrectas segn) Tj
+T*
+(el resultado.) Tj
+T*
+() Tj
+T*
+(SUPUESTOS Y LIMITACIONES CONSCIENTES) Tj
+T*
+(- No se implement cifrado de contraseas ni tokens; las contraseas se comparan en claro) Tj
+T*
+(porque se pidi un login "sin complicaciones".) Tj
+T*
+(- No hay sesiones ni almacenamiento de estado en frontend; solo se muestra el resultado de la) Tj
+T*
+(autenticacin.) Tj
+T*
+(- El catlogo de usuarios proviene del repositorio en memoria ya presente en el proyecto; no se) Tj
+T*
+(aadi creacin ni semillado extra.) Tj
+T*
+() Tj
+T*
+(RAZONES DETRS DE LAS DECISIONES) Tj
+T*
+(- **Simplicidad operativa:** al reutilizar los repositorios existentes y evitar dependencias) Tj
+T*
+(nuevas, el endpoint funciona con la configuracin actual del proyecto.) Tj
+T*
+(- **Contratos explcitos:** los DTOs de entrada/salida documentan qu espera y qu ofrece el) Tj
+T*
+(login, facilitando pruebas y depuracin.) Tj
+T*
+(- **Retroalimentacin clara en UI:** el componente muestra mensajes directos \(xito/error\) para) Tj
+T*
+(validar manualmente sin herramientas externas.) Tj
+T*
+() Tj
+T*
+(PRUEBAS REALIZADAS) Tj
+T*
+(- Se intent ejecutar `mvn -q -f user-solution/pom.xml test`, pero fall por un error 403 al) Tj
+T*
+(descargar el parent POM desde Maven Central \(limitacin del entorno\).) Tj
+T*
+(- Las pruebas manuales se basan en llamadas desde el formulario al endpoint; no se aadieron) Tj
+T*
+(tests automatizados especficos para el login.) Tj
+T*
+() Tj
+T*
+(PRXIMOS PASOS SUGERIDOS) Tj
+T*
+(- Sustituir la comparacin de contraseas en claro por hashing \(e.g., BCrypt\) y almacenamiento) Tj
+T*
+(cifrado.) Tj
+T*
+(- Emitir tokens o sesiones para mantener al usuario autenticado en posteriores peticiones.) Tj
+T*
+(- Aadir validaciones de formato de email y reglas de contrasea ms estrictas en frontend y) Tj
+T*
+(backend.) Tj
+T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 8 0 R /Resources << /Font << /F1 9 0 R >> >> >>
+endobj
+8 0 obj
+<< /Length 156 >>
+stream
+BT
+/F1 12 Tf
+14 TL
+50 780 Td
+(- Incorporar pruebas unitarias para `authenticate` y pruebas de integracin para el endpoint) Tj
+T*
+(`/users/login`.) Tj
+T*
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000135 00000 n 
+0000000261 00000 n 
+0000003350 00000 n 
+0000003476 00000 n 
+0000006619 00000 n 
+0000006745 00000 n 
+0000006952 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R >>
+startxref
+7022
+%%EOF

@@ -1,0 +1,34 @@
+---
+title: "Pruebas de login sencillo"
+author: "Equipo PhotoFilm4You"
+date: "`r format(Sys.Date(), '%d/%m/%Y')`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Objetivo
+Este informe resume las pruebas automatizadas añadidas para cubrir el flujo de login básico del servicio de usuarios. El backend expone un endpoint `/users/login` que valida email y contraseña contra los usuarios existentes y, si son correctos, devuelve los datos básicos del perfil.
+
+## Alcance de las pruebas
+- **Servicio de dominio (`UserServiceImpl`)**: asegura que la lógica de autenticación solo devuelve un usuario cuando el email existe y la contraseña coincide exactamente.
+- **Controlador REST (`UserRESTController`)**: verifica que el endpoint responde `200 OK` con el JSON esperado cuando las credenciales son válidas y `401 Unauthorized` cuando fallan.
+
+## Detalles de implementación
+- Se usan dobles de prueba (mocks) de `UserRepository` y `AlertRepository` para aislar la lógica de dominio.
+- Para el controlador se monta un `MockMvc` en modo standalone, inyectando un `UserService` simulado para controlar las respuestas sin necesidad de levantar el contexto completo de Spring.
+- Las aserciones se centran en:
+  - Presencia/ausencia de `Optional<User>` en el servicio según cada escenario.
+  - Códigos de estado HTTP y cuerpo JSON que devuelve el endpoint `/users/login`.
+
+## Casos cubiertos
+1. **Autenticación correcta**: el servicio devuelve el usuario y el controlador responde 200 con el payload `{id, fullName, email, phoneNumber}`.
+2. **Usuario inexistente**: el servicio retorna vacío y el controlador responde 401.
+3. **Contraseña incorrecta**: el servicio retorna vacío al no coincidir la contraseña almacenada.
+
+## Próximos pasos sugeridos
+- Añadir pruebas de validación de entrada (campos obligatorios) y de trazabilidad de logs.
+- Integrar pruebas de integración que utilicen el repositorio real con datos de ejemplo.
+- Automatizar la ejecución de tests en CI para evitar regresiones en el login.
