@@ -4,6 +4,7 @@ import edu.uoc.epcsd.user.application.rest.request.CreateUserRequest;
 import edu.uoc.epcsd.user.application.rest.request.LoginRequest;
 import edu.uoc.epcsd.user.application.rest.response.GetUserResponse;
 import edu.uoc.epcsd.user.application.rest.response.LoginResponse;
+import edu.uoc.epcsd.user.config.JwtUtil;
 import edu.uoc.epcsd.user.domain.User;
 import edu.uoc.epcsd.user.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,13 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = "http://localhost:8080")
 public class UserRESTController {
 
     private final UserService userService;
+    
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -62,15 +67,32 @@ public class UserRESTController {
 
         return ResponseEntity.ok().body(userService.getUsersToAlert(productId, availableOnDate).stream().map(user -> GetUserResponse.fromDomain(user)).toArray(GetUserResponse[]::new));
     }
-
+    
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
         log.trace("login");
 
         return userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword())
-                .map(user -> ResponseEntity.ok(LoginResponse.fromDomain(user)))
+                .map(user -> {
+                	String role = user.getEmail().equalsIgnoreCase("admin@photofilm4you.com")
+                	        ? "admin"
+                	        : "user";
+
+                    String token = jwtUtil.generateToken(user, role);
+
+                    LoginResponse response = LoginResponse.builder()
+                            .id(user.getId())
+                            .fullName(user.getFullName())
+                            .email(user.getEmail())
+                            .phoneNumber(user.getPhoneNumber())
+                            .token(token)
+                            .build();
+
+                    return ResponseEntity.ok(response);
+                })
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
+
 
     @PostMapping
     public ResponseEntity<Long> createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {

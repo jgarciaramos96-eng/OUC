@@ -19,6 +19,9 @@ public class LoginResponse {
     private String email;
 
     private String phoneNumber;
+    
+    private String token;
+    
 
     public static LoginResponse fromDomain(User user) {
         return LoginResponse.builder()
