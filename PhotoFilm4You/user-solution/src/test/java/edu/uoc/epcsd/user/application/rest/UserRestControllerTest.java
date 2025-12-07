@@ -2,6 +2,7 @@ package edu.uoc.epcsd.user.application.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.uoc.epcsd.user.application.rest.request.LoginRequest;
+import edu.uoc.epcsd.user.config.JwtUtil;
 import edu.uoc.epcsd.user.domain.User;
 import edu.uoc.epcsd.user.domain.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +26,9 @@ class UserRESTControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private JwtUtil jwtUtil;
+
     private MockMvc mockMvc;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -36,7 +40,7 @@ class UserRESTControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        UserRESTController controller = new UserRESTController(userService);
+        UserRESTController controller = new UserRESTController(userService, jwtUtil);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -44,6 +48,7 @@ class UserRESTControllerTest {
     void loginReturnsUserAuthenticationSucceeds() throws Exception {
         User user = buildUser();
         when(userService.authenticate(user.getEmail(), user.getPassword())).thenReturn(Optional.of(user));
+        when(jwtUtil.generateToken(user, "user")).thenReturn("fake.jwt.token");
 
         LoginRequest request = new LoginRequest();
         request.setEmail(user.getEmail());
@@ -57,7 +62,8 @@ class UserRESTControllerTest {
                         "\"id\":" + user.getId() + "," +
                         "\"fullName\":\"" + user.getFullName() + "\"," +
                         "\"email\":\"" + user.getEmail() + "\"," +
-                        "\"phoneNumber\":\"" + user.getPhoneNumber() + "\"" +
+                        "\"phoneNumber\":\"" + user.getPhoneNumber() + "\"," +
+                        "\"token\":\"fake.jwt.token\"" +
                         "}"));
     }
 

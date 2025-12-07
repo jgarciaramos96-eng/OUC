@@ -7,7 +7,6 @@ import edu.uoc.epcsd.user.application.rest.response.LoginResponse;
 import edu.uoc.epcsd.user.config.JwtUtil;
 import edu.uoc.epcsd.user.domain.User;
 import edu.uoc.epcsd.user.domain.service.UserService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,16 +22,20 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Log4j2
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RestController
 @RequestMapping("/users")
 @CrossOrigin(origins = "http://localhost:8080")
 public class UserRESTController {
 
     private final UserService userService;
-    
+
+    private final JwtUtil jwtUtil;
+
     @Autowired
-    private JwtUtil jwtUtil;
+    public UserRESTController(UserService userService, JwtUtil jwtUtil) {
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
+    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
