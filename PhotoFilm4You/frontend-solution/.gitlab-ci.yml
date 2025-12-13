@@ -29,6 +29,12 @@ lint:
     - npm ci
     - npm run lint
 
+unit_test:
+  stage: codecheck
+  script:
+    - npm ci
+    - npm run test:unit
+
 release:
   stage: release
   image: node:20

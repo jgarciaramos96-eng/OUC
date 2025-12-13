@@ -10,4 +10,5 @@ public interface SpringDataProductRepository extends JpaRepository<ProductEntity
 
 //    public List<ProductEntity> findCategoryEntityByDescriptionContaining(String description);
 
+	boolean existsByCategoryId(Long categoryId);
 }

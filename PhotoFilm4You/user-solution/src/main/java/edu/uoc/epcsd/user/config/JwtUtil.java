@@ -14,7 +14,7 @@ import edu.uoc.epcsd.user.domain.User;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "GRUPO8_GRUPO8_GRUPO8_GRUPO8_GRUPO8";  // Clave  para HS256" (232 bits mínimo));
+    private static final String SECRET_KEY = "GRUPO8_GRUPO8_GRUPO8_GRUPO8_GRUPO8";
 
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
@@ -23,9 +23,10 @@ public class JwtUtil {
                 .setSubject(user.getEmail())
                 .claim("role", role)
                 .claim("fullName", user.getFullName())
+                .claim("userId", user.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 7200000)) // 2h
-                .signWith(key, SignatureAlgorithm.HS256) 
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 }

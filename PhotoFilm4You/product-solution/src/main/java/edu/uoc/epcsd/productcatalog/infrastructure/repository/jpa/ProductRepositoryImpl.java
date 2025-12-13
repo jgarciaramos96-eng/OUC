@@ -61,4 +61,22 @@ public class ProductRepositoryImpl implements ProductRepository {
     public void deleteProduct(Product product) {
         jpaRepository.delete(ProductEntity.fromDomain(product));
     }
+
+    @Override
+    public void updateProduct(Product product) {
+
+        ProductEntity productEntity = ProductEntity.fromDomain(product);
+
+        productEntity.setCategory(
+                jpaCategoryRepository.findById(product.getCategoryId())
+                        .orElseThrow(IllegalArgumentException::new)
+        );
+
+        jpaRepository.save(productEntity);
+    }
+    
+    @Override
+    public boolean existsByCategoryId(Long categoryId) {
+    	return jpaRepository.existsByCategoryId(categoryId);
+    }
 }

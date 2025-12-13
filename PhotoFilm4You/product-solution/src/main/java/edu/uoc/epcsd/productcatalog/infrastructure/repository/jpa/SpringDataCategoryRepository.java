@@ -12,4 +12,5 @@ public interface SpringDataCategoryRepository extends JpaRepository<CategoryEnti
 
     public List<CategoryEntity> findCategoryEntityByDescriptionContaining(String description);
 
+    boolean existsByParentId(Long parentId);
 }

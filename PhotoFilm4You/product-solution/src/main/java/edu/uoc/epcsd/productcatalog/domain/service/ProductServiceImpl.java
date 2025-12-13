@@ -43,4 +43,13 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.deleteProduct(product);
     }
+
+    @Override
+    public void updateProduct(Product product) {
+
+        productRepository.findProductById(product.getId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        productRepository.updateProduct(product);
+    }
 }

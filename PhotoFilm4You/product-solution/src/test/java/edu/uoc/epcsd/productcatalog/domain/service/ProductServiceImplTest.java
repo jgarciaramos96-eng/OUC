@@ -8,10 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
@@ -64,5 +64,37 @@ class ProductServiceImplTest {
         when(productRepository.createProduct(product)).thenThrow(new IllegalArgumentException("Unknown category"));
 
         assertThrows(IllegalArgumentException.class, () -> productService.createProduct(product));
+    }
+
+    @Test
+    void updateProductOK() {
+        Product product = Product.builder()
+                .id(1L)
+                .name("CamaraSUB")
+                .build();
+
+        when(productRepository.findProductById(1L))
+                .thenReturn(Optional.of(product));
+
+        assertDoesNotThrow(() -> productService.updateProduct(product));
+
+        verify(productRepository).findProductById(1L);
+        verify(productRepository).updateProduct(product);
+    }
+
+    @Test
+    void updateProductNotFound() {
+        Product product = Product.builder()
+                .id(1L)
+                .name("CamaraSUB")
+                .build();
+
+        when(productRepository.findProductById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(product));
+
+        verify(productRepository).findProductById(1L);
+        verify(productRepository, never()).updateProduct(any());
     }
 }

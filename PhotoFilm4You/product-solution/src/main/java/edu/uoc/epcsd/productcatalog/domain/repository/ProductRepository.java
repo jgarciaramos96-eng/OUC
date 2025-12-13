@@ -16,4 +16,8 @@ public interface ProductRepository {
     Long createProduct(Product product);
 
     void deleteProduct(Product product);
+
+    void updateProduct(Product product);
+    
+    boolean existsByCategoryId(Long categoryId);
 }

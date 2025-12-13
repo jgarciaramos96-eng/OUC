@@ -3,6 +3,7 @@ package edu.uoc.epcsd.productcatalog.application.rest;
 
 import edu.uoc.epcsd.productcatalog.application.rest.request.CreateProductRequest;
 import edu.uoc.epcsd.productcatalog.application.rest.request.FindProductsByCriteria;
+import edu.uoc.epcsd.productcatalog.application.rest.request.UpdateProductRequest;
 import edu.uoc.epcsd.productcatalog.application.rest.response.GetProductResponse;
 import edu.uoc.epcsd.productcatalog.domain.Product;
 import edu.uoc.epcsd.productcatalog.domain.service.ProductService;
@@ -98,4 +99,29 @@ public class ProductRESTController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The specified product id " + productId + " does not exist.", e);
         }
     }
+
+    @PutMapping("/{productId}")
+    public ResponseEntity<Void> updateProduct(@PathVariable @NotNull Long productId,@RequestBody @Valid @NotNull UpdateProductRequest updateRequest) {
+
+        log.trace("updateProduct");
+
+        try {
+            productService.updateProduct(Product.builder()
+                    .id(productId)
+                    .name(updateRequest.getName())
+                    .description(updateRequest.getDescription())
+                    .dailyPrice(updateRequest.getDailyPrice())
+                    .model(updateRequest.getModel())
+                    .brand(updateRequest.getBrand())
+                    .categoryId(updateRequest.getCategoryId())
+                    .build());
+
+            return ResponseEntity.noContent().build();
+
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The specified product or category does not exist.", e);
+        }
+    }
+
 }

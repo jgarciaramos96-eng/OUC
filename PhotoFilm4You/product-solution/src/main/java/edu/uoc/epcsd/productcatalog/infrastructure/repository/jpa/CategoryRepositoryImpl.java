@@ -61,4 +61,37 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
         return jpaRepository.save(categoryEntity).getId();
     }
+
+    @Override
+    public void updateCategory(Category category) {
+        CategoryEntity existingCategory = jpaRepository.findById(category.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+
+        if (category.getParentId() != null) {
+            CategoryEntity parentCategory = jpaRepository.findById(category.getParentId())
+                    .orElseThrow(() -> new IllegalArgumentException("Parent category not found"));
+            existingCategory.setParent(parentCategory);
+        } else {
+            existingCategory.setParent(null);
+        }
+
+        existingCategory.setName(category.getName());
+        existingCategory.setDescription(category.getDescription());
+
+        jpaRepository.save(existingCategory);
+    }
+    
+    @Override
+    public void deleteCategory(Long id) {
+    	Optional<CategoryEntity> category = jpaRepository.findById(id);
+    	if (category.isEmpty()) {
+    		throw new IllegalArgumentException("Category does not exist");
+    	}
+    	jpaRepository.deleteById(id);
+    }
+    
+    @Override
+    public boolean existsByParentId(Long parentId) {
+    	return jpaRepository.existsByParentId(parentId);
+    }
 }

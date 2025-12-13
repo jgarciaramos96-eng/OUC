@@ -15,4 +15,9 @@ public interface CategoryRepository {
 
     Long createCategory(Category category);
 
+    void updateCategory(Category category);
+
+    void deleteCategory(Long id);
+    
+    boolean existsByParentId(Long parentId);
 }

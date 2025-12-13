@@ -1,26 +1,9 @@
 <div id="top"></div>
-<!--
-*** Made using the Best-README-Template
-*** https://github.com/othneildrew/Best-README-Template/blob/master/README.md
--->
 
-
-<!-- PROJECT LOGO -->
-<br />
+<br/>
 <div align="center">
-  <h3 align="center">SA</h3>
-
-  <p align="center">
-    SA project stub
-    <br />
-    <br />
-    <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025-improved/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025-improved/issues">Request Feature</a>
-  </p>
+  <h3 align="center">Photo&Film4You · Group +SW8 · Infrastructure</h3>
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -32,32 +15,32 @@
         <li><a href="#made-with">Made with</a></li>
       </ul>
     </li>
+    <li><a href="#before-starting">Before starting</a></li>
     <li>
-      <a href="#before-starting">Before starting</a>
-    </li>
-    <li>
-      <a href="#installation">Tnstallation</a>
+      <a href="#installation">Installation</a>
       <ul>
         <li><a href="#docker-desktop--docker-compose-installation">Docker Desktop / Docker Compose installation</a></li>
-        <li><a href="#basic-infrastructure-dockers">Basic infrastructure (dockers)</a></li>
-        <li><a href="#microservices-stubs">Microservices stubs</a></li>
+        <li><a href="#running-the-environment">Running the environment</a></li>
       </ul>
     </li>
-    <li><a href="#links-to-tools-libraries-and-used-modules">Links to tools, libraries and used modules</a></li>
-    <li><a href="#contact">Contact</a></li>
+        <li><a href="#tools-libraries-and-modules-used">Tools, links and modules used</a></li>
   </ol>
 </details>
 
-<!-- About this project -->
+
 ## About this project
 
-This is the lab project for the SA course at the UOC. It is made up of 3 elements (each one in its own GIT repository):
+This repository contains the **docker-compose.yml** file required to start all the infrastructure and services needed for the basic *walking skeleton* of the **Photo&Film4You** system.
 
-* A <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025/blob/main/docker-compose.yml">docker-compose.yml</a> file to startup the basic infrastructure needed to run the services
-* A folder for the <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025-productcatalog-improved">ProductCatalog</a> microservice 
-* A folder for the <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025-user-improved">User</a> microservice 
-* A folder for the <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025-notification-improved">Notification</a> microservice 
-* A folder for the <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025-digital-improved">Digital</a> microservice 
+It includes:
+
+* Kafka + Zookeeper
+* Three PostgreSQL databases (Product, User, Digital)
+* The Product microservice
+* The Frontend for adding products
+* The Adminer database console
+
+This setup allows running the full workflow of **adding a product** through the frontend, saving it into PostgreSQL.
 
 <p align="right">(<a href="#top">go up</a>)</p>
 
@@ -69,26 +52,29 @@ This is the lab project for the SA course at the UOC. It is made up of 3 element
 * [Maven](https://maven.apache.org/)
 * [Apache Kafka](https://kafka.apache.org/)
 * [PostgreSQL](https://www.postgresql.org/)
+* [Vue.js](https://vuejs.org/)
 
 <p align="right">(<a href="#top">go up</a>)</p>
 
 
 ## Before starting
 
-To set up the containers that are part of the basic infrastructure of the project, the following ports will be used:
+The following ports are used by this environment:
 
-* 22181 - Apache Kafka (Zookeeper)
-* 19092 - Apache Kafka (Server)
-* 54320, 54321, 54322 - PostgreSQL
-* 18080 - Adminer
-* 18081 - Used by the productcatalog microservice
-* 18082 - Used by the user microservice
-* 18083 - Used by the notification microservice
-* 18084 - Used by the digital microservice
+| Service                  | Port (Host → Container)      |
+|--------------------------|------------------------------|
+| Zookeeper                | 22181 → 2181                 |
+| Kafka                    | 29092 → 9092 & 19092 → 19092 |
+| productdb                | 54320 → 5432                 |
+| userdb                   | 54321 → 5432                 |
+| digitaldb                | 54322 → 5432                 |
+| product-solution backend | 18081 → 18081                |
+| frontend                 | 80 → 80                      |
+| Adminer                  | 18080 → 8080                 |
 
-To avoid conflicts with other installed applications, the default ports of all applications have been modified. Still, if there is a conflict over a port already in use, simply modifying the ports specified in the [docker-compose.yml](https://github.com/UOC-SA-SPRING-2025/spring-2025-improved/blob/main/docker-compose.yml) file will fix the problem. This link to the official docker compose documentation explains how to modify this configuration using the _ports_: [Networking in Compose](https://docs.docker.com/compose/networking/) option.
+If any port is already in use, edit the `ports:` section in `docker-compose.yml`.
 
-__IMPORTANT NOTICE:__ The modified ports will also have to be changed in the microservices configuration (usually defined in the Spring _application.properties_ file).
+<p align="right">(<a href="#top">go up</a>)</p>
 
 
 ## Installation
@@ -101,54 +87,37 @@ Under Windows, registration may be required, as <a href="https://docs.docker.com
 
 It is important that you carefully review the hardware and software requirements described in the installation guides. If your system fails to meet them, even after a successful installation, you will see errors when trying to start containers. An alternative for those with slightly older systems is <a href="https://www.how2shout.com/how-to/how-to-install-docker-toolbox-using-chocolatey-choco-on-windows-10.html">Docker Toolbox</a>.
 
-Once Docker Compose is installed, we will continue with the project stub. It is recommended to set up a folder structure like so:
-
-```
-spring-2025-improved
-├ README.md
-├ docker-compose.yml
-├ spring-2025-notification-improved
-├ spring-2025-productcatalog-improved
-├ spring-2025-user-improved
-└ spring-2025-digital-improved
-```
-
 <p align="right">(<a href="#top">go up</a>)</p>
 
+## Running the environment
 
-### Basic infrastructure (dockers)
-
-* Download the code in ZIP format or just clone the <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025-improved">spring-2025-improved</a> repository in the working folder (_spring-2025-improved_ if the recommendation has been followed).
-
-* From the work folder, run the command:
+Once Docker Compose is installed, to start the infrastructure, you need to run the command from within the folder:
 
   ```sh
-  docker compose up
+  docker compose up -d
   (Win)
   ```
   ```sh
-  docker-compose up
+  docker-compose up -d
   (Linux)
   ```
-  
-The following containers should start:
 
-* spring-2025-adminer_1 - adminer, an SQL client
-* spring-2025-kafka_1 - the kafka server
-* spring-2025-productdb_1 - the postgresql database for the productcatalog service
-* spring-2025-userdb_1 - the postgresql database for the user service
-* spring-2025-digitaldb_1 - the postgresql database for the digital service
-* spring-2025-zookeeper_1 - kafka zookeeper
+The stack *photo-and-film-4-you* should start along with these containers:
+
+* frontend-1 - vue.js frontend
+* product-solution-1 - product backend
+* adminer-1 - adminer, an SQL client
+* kafka-1 - the kafka server
+* productdb-1 - the postgresql database for the productcatalog service
+* userdb-1 - the postgresql database for the user service
+* digitaldb-1 - the postgresql database for the digital service
+* zookeeper-1 - kafka zookeeper
 
 In order to verify that all containers are up and running, we will execute the following command:
 
   ```sh
   docker ps -a
   ```
-  
-We should see something like this:
-
-![Docker containers running](https://github.com/UOC-SA-SPRING-2025/spring-2025-improved/blob/main/docker_containers_running.png)
 
 To check the operation, you can access the _Adminer_ panel at http://localhost:18080/ and make a query against the PostgreSQL DB that we have just instantiated with the following connection data:
 
@@ -159,9 +128,7 @@ To check the operation, you can access the _Adminer_ panel at http://localhost:1
 * Password: product
 * Schema: product
 
-![Adminer productdb 1](https://github.com/UOC-SA-SPRING-2025/spring-2025-improved/blob/main/adminer1.png)
-
-![Adminer productdb 2](https://github.com/UOC-SA-SPRING-2025/spring-2025-improved/blob/main/adminer1_1.png)
+</br>
 
 * userdb
 * Engine: PostgreSQL
@@ -170,9 +137,7 @@ To check the operation, you can access the _Adminer_ panel at http://localhost:1
 * Password: user
 * Schema: user
 
-![Adminer userdb 1](https://github.com/UOC-SA-SPRING-2025/spring-2025-improved/blob/main/adminer2.png)
-
-![Adminer userdb 2](https://github.com/UOC-SA-SPRING-2025/spring-2025-improved/blob/main/adminer2_1.png)
+</br>
 
 * digitaldb
 * Engine: PostgreSQL
@@ -181,21 +146,9 @@ To check the operation, you can access the _Adminer_ panel at http://localhost:1
 * Password: digital
 * Schema: digital
 
-![Adminer digitaldb 1](https://github.com/UOC-SA-SPRING-2025/spring-2025-improved/blob/main/adminer3.png)
-
-![Adminer digitaldb 2](https://github.com/UOC-SA-SPRING-2025/spring-2025-improved/blob/main/adminer3_1.png)
-
-
-### Microservices stubs
-
-* Download the code in ZIP format or just clone the <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025-productcatalog-improved">spring-2025-productcatalog-improved</a>, <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025-user-improved">spring-2025-user-improved</a>, <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025-digital-improved">spring-2025-digital-improved</a> and <a href="https://github.com/UOC-SA-SPRING-2025/spring-2025-notification-improvedn">spring-2025-notification-improved</a> repositories into the working folder (_spring-2025-improved_ if the recommendation has been followed)
-* Open the projects in the preferred development environment
-* Verify proper build and run by starting the projects and checking that http://localhost:18081/swagger-ui/index.html , http://localhost:18082/swagger-ui/index.html and http://localhost:18084/swagger-ui/index.html are accessible
-
 <p align="right">(<a href="#top">go up</a>)</p>
 
-
-## Links to used tools, libraries and modules
+## Tools, libraries and modules used
 
 * [Docker](https://www.docker.com/) / [Docker Compose](https://github.com/docker/compose)
 * [Spring](https://spring.io/) / [Spring Boot](https://spring.io/projects/spring-boot)
@@ -206,7 +159,7 @@ To check the operation, you can access the _Adminer_ panel at http://localhost:1
 * [PostgreSQL](https://www.postgresql.org/)
 * [Lombok](https://projectlombok.org/)
 * [springdoc-openapi-ui (SwaggerUI for OpenApi 3)](https://github.com/springdoc/springdoc-openapi)
+* [Vue.js](https://vuejs.org/)
 
 
-<p align="right">(<a href="#top">ir arriba</a>)</p>
-
+<p align="right">(<a href="#top">go up</a>)</p>

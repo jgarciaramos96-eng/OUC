@@ -1,4 +1,4 @@
-name: "photo-and-film-4-you"
+name: "pds-grupo-a8"
 
 services:
   zookeeper:
@@ -56,11 +56,10 @@ services:
     environment:
       POSTGRES_USER: digital
       POSTGRES_PASSWORD: digital
-      POSTGRES_DB: digital
 
   # -- Backend --
   product-solution:
-    image: registry.gitlab.com/uoc/pdp-pds/pdp_pds_2025_2026/pds_2025_2026_a8/photo-and-film-4-you/product-solution:latest
+    image: registry.gitlab.com/uoc/pdp-pds/pdp_pds_2025_2026/pds_2025_2026_a8/photo-and-film-4-you/product-solution:v1.3.1
     depends_on:
       - productdb
       - kafka
@@ -72,9 +71,24 @@ services:
       SPRING_DATASOURCE_PASSWORD: product
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
 
+  user-solution:
+    image: registry.gitlab.com/uoc/pdp-pds/pdp_pds_2025_2026/pds_2025_2026_a8/photo-and-film-4-you/user-solution:v1.2.4
+    depends_on:
+      - userdb
+      - kafka
+      - product-solution
+    ports:
+      - "18082:18082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://userdb:5432/user
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: user
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      PRODUCTSERVICE_GETPRODUCTDETAILS_URL: http://product-solution:18081/products/{productId}
+
   # -- Frontend --
   frontend:
-    image: registry.gitlab.com/uoc/pdp-pds/pdp_pds_2025_2026/pds_2025_2026_a8/photo-and-film-4-you/frontend-solution:latest
+    image: registry.gitlab.com/uoc/pdp-pds/pdp_pds_2025_2026/pds_2025_2026_a8/photo-and-film-4-you/frontend-solution:v2.0.0
     depends_on:
       - product-solution
     ports:

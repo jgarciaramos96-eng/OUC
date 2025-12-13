@@ -8,7 +8,6 @@ import edu.uoc.epcsd.user.config.JwtUtil;
 import edu.uoc.epcsd.user.domain.User;
 import edu.uoc.epcsd.user.domain.service.UserService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +27,8 @@ import java.util.List;
 public class UserRESTController {
 
     private final UserService userService;
-
     private final JwtUtil jwtUtil;
 
-    @Autowired
     public UserRESTController(UserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
@@ -70,7 +67,7 @@ public class UserRESTController {
 
         return ResponseEntity.ok().body(userService.getUsersToAlert(productId, availableOnDate).stream().map(user -> GetUserResponse.fromDomain(user)).toArray(GetUserResponse[]::new));
     }
-    
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
         log.trace("login");

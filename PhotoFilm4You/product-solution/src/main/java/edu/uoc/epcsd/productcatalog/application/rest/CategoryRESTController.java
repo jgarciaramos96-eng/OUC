@@ -2,6 +2,7 @@ package edu.uoc.epcsd.productcatalog.application.rest;
 
 import edu.uoc.epcsd.productcatalog.application.rest.request.CreateCategoryRequest;
 import edu.uoc.epcsd.productcatalog.application.rest.request.FindCategoriesByCriteria;
+import edu.uoc.epcsd.productcatalog.application.rest.request.UpdateCategoryRequest;
 import edu.uoc.epcsd.productcatalog.domain.Category;
 import edu.uoc.epcsd.productcatalog.domain.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -80,4 +81,43 @@ public class CategoryRESTController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The specified parent category " + createCategoryRequest.getParentCategoryId() + " does not exist.", e);
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateCategory(@PathVariable @NotNull Long id, @RequestBody @Valid @NotNull UpdateCategoryRequest updateRequest) {
+
+        log.trace("updateCategory");
+
+        try {
+            categoryService.updateCategory(Category.builder()
+                    .id(id)
+                    .name(updateRequest.getName())
+                    .description(updateRequest.getDescription())
+                    .parentId(updateRequest.getParentCategoryId())
+                    .build());
+
+            return ResponseEntity.noContent().build();
+
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The specified category or parent category does not exist.", e);
+        }
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable @NotNull Long id) {
+    	log.trace("deleteCategory");
+    	
+    	try {
+    		boolean deleted = categoryService.deleteCategory(id);
+    		if (deleted) {
+    			return ResponseEntity.noContent().build(); // 204
+    		} else {
+    			return ResponseEntity.notFound().build(); // 404
+    		}
+    		
+    	} catch (IllegalArgumentException e) {
+    		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e); // 400
+    	}
+    }
+
 }

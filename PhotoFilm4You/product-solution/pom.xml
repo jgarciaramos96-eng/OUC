@@ -10,13 +10,12 @@
     </parent>
     <groupId>edu.uoc.epcsd</groupId>
     <artifactId>productcatalog</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>productcatalog</name>
     <description>ProductCatalog Spring Boot stub for EPCSD</description>
     <properties>
         <java.version>11</java.version>
-        <sonar.projectKey>SW8-group</sonar.projectKey>
-        <sonar.projectName>SW8-group</sonar.projectName>
+        <sonar.projectKey>SW8-Product</sonar.projectKey>
+        <sonar.projectName>SW8-Product</sonar.projectName>
         <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
     </properties>
     <dependencies>

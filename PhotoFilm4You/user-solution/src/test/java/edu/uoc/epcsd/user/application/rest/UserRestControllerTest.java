@@ -25,7 +25,7 @@ class UserRESTControllerTest {
 
     @Mock
     private UserService userService;
-
+    
     @Mock
     private JwtUtil jwtUtil;
 
@@ -35,6 +35,10 @@ class UserRESTControllerTest {
     
     private User buildUser() {
         return User.builder().id(42L).fullName("Ada Lovelace").email("ada@example.com").password("pass").phoneNumber("999-888-777").build();
+    }
+
+    private User buildAdmin() {
+        return User.builder().id(45L).fullName("Admin").email("admin@photofilm4you.com").password("pass").phoneNumber("999-888-777").build();
     }
 
     @BeforeEach
@@ -49,6 +53,31 @@ class UserRESTControllerTest {
         User user = buildUser();
         when(userService.authenticate(user.getEmail(), user.getPassword())).thenReturn(Optional.of(user));
         when(jwtUtil.generateToken(user, "user")).thenReturn("fake.jwt.token");
+
+
+        LoginRequest request = new LoginRequest();
+        request.setEmail(user.getEmail());
+        request.setPassword(user.getPassword());
+
+        mockMvc.perform(post("/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{" +
+                        "\"id\":" + user.getId() + "," +
+                        "\"fullName\":\"" + user.getFullName() + "\"," +
+                        "\"email\":\"" + user.getEmail() + "\"," +
+                        "\"phoneNumber\":\"" + user.getPhoneNumber() + "\"," +
+                        "\"token\":\"fake.jwt.token\"" +
+                        "}"));
+    }
+
+    @Test
+    void loginReturnsAdminAuthenticationSucceeds() throws Exception {
+        User user = buildAdmin();
+        when(userService.authenticate(user.getEmail(), user.getPassword())).thenReturn(Optional.of(user));
+        when(jwtUtil.generateToken(user, "admin")).thenReturn("fake.jwt.token");
+
 
         LoginRequest request = new LoginRequest();
         request.setEmail(user.getEmail());
